@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <title>Email Validator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      text-align: center; /* Center all text on the page */
+    }
+
+    h2 {
+      margin-top: 20px;
+      color: #333;
+    }
+
+    /* General textarea and button styles */
+    textarea {
+      width: 80%;
+      margin: 10px auto;
+      display: block;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      text-align: center; /* Center text inside textareas */
+    }
+
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    h3 {
+      color: #333;
+    }
+
+    #logs {
+      height: 200px;
+      overflow-y: scroll;
+      border: 1px solid #ccc;
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+      font-size: 14px;
+      white-space: pre-wrap;
+      text-align: left; /* Keep logs text aligned left for better readability */
+    }
+
+    #validEmails, #invalidEmails {
+      height: 100px;
+      width: 80%;
+      margin: 10px auto;
+      display: block;
+      font-size: 14px;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      text-align: center; /* Center text inside textareas */
+    }
+
+    .copyButton {
+      margin-top: 5px;
+      padding: 5px 10px;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .copyButton:hover {
+      background-color: #1976D2;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      textarea {
+        width: 90%;
+      }
+
+      button {
+        width: 90%;
+      }
+
+      #logs {
+        width: 90%;
+      }
+
+      #validEmails, #invalidEmails {
+        width: 90%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      textarea {
+        font-size: 12px;
+      }
+
+      button, .copyButton {
+        padding: 8px 16px;
+      }
+
+      #logs {
+        height: 150px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>Pie Email Validator</h2>
+   <p>Developed by: <strong>Pjɗw Sʌzzʌɗ</strong></p>
+  <h2>Contact</h2>
+  <ul class="social-links" style="list-style-type: none; padding: 0;">
+      <li>
+          <a href="https://www.facebook.com/pjdwsazzad7" target="_blank">
+              <i class="fab fa-facebook"></i> Pjɗw Sʌzzʌɗ
+          </a>
+      </li>
+      <li>
+          <a href="https://m.me/pjdwsazzad7" target="_blank">
+              <i class="fab fa-facebook-messenger"></i> Pjɗw Sʌzzʌɗ
+          </a>
+      </li>
+      <li>
+          <a href="https://t.me/Pjdwsazzad" target="_blank">
+              <i class="fab fa-telegram"></i> Pjɗw Sʌzzʌɗ
+          </a>
+      </li>
+  </ul>
+
+
+  <textarea id="emailInput" placeholder="Enter email addresses (one per line)"></textarea>
+  <button id="validateButton">Validate Emails</button>
+  <h3>Valid Emails</h3>
+  <textarea id="validEmails" readonly></textarea>
+  <button class="copyButton" id="copyValidEmails">Copy Valid Emails</button>
+  <h3>Invalid Emails</h3>
+  <textarea id="invalidEmails" readonly></textarea>
+  <button class="copyButton" id="copyInvalidEmails">Copy Invalid Emails</button>
+  <h3>Logs</h3>
+  <div id="logs"></div>
+
+  <script>
+    const validateButton = document.getElementById('validateButton');
+    const emailInput = document.getElementById('emailInput');
+    const validEmails = document.getElementById('validEmails');
+    const invalidEmails = document.getElementById('invalidEmails');
+    const logs = document.getElementById('logs');
+    const copyValidEmails = document.getElementById('copyValidEmails');
+    const copyInvalidEmails = document.getElementById('copyInvalidEmails');
+
+    const serverUrl = window.location.origin;
+    const socket = new WebSocket(`${serverUrl.replace(/^http/, 'ws')}`);
+
+    socket.onopen = () => {
+      console.log('Client connected to Pie Mailer Server\n🛠️ Developed by: Pjɗw Sʌzzʌɗ');
+    };
+
+    socket.onmessage = (message) => {
+      const logMessage = message.data;
+      if (!logs.innerHTML.includes(logMessage)) {
+        logs.innerHTML += logMessage + '\n';
+        logs.scrollTop = logs.scrollHeight;
+      }
+    };
+
+    socket.onclose = () => {
+      logs.innerHTML += '❌ Client disconnected from server\n';
+    };
+
+    copyValidEmails.addEventListener('click', () => {
+      navigator.clipboard.writeText(validEmails.value)
+        .then(() => {
+          alert('Valid emails copied to clipboard!');
+        })
+        .catch(err => {
+          console.error('Error copying valid emails: ', err);
+        });
+    });
+
+    copyInvalidEmails.addEventListener('click', () => {
+      navigator.clipboard.writeText(invalidEmails.value)
+        .then(() => {
+          alert('Invalid emails copied to clipboard!');
+        })
+        .catch(err => {
+          console.error('Error copying invalid emails: ', err);
+        });
+    });
+
+    validateButton.addEventListener('click', () => {
+      const emails = emailInput.value.split('\n');
+      validEmails.value = '';
+      invalidEmails.value = '';
+      socket.send('Starting email validation...');
+      
+      fetch(`${serverUrl}/validate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emails.join('\n') })
+      })
+      .then(response => response.json())
+      .then((data) => {
+        validEmails.value = data.validEmails.join('\n');
+        invalidEmails.value = data.invalidEmails.join('\n');
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    });
+  </script>
+</body>
+</html>
