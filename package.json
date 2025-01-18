@@ -1,0 +1,54 @@
+{
+  "name": "Pie Email Validator",
+  "version": "1.0.0",
+  "description": "A Node.js application for email validation.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "electron .",
+    "dev": "nodemon index.js",
+    "build": "electron-builder"
+  },
+  "keywords": [
+    "email-validator",
+    "smtp",
+    "nodejs",
+    "html-email"
+  ],
+  "author": "Md Sazzad Hosen",
+  "license": "none",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "body-parser": "^1.20.3",
+    "csv-parser": "^3.0.0",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "form-data": "^4.0.1",
+    "multer": "^1.4.5-lts.1",
+    "node-fetch": "^3.3.2",
+    "nodemailer": "^6.9.3",
+    "path": "^0.12.7",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "electron": "^25.0.0",
+    "electron-builder": "^24.0.0",
+    "nodemon": "^3.0.1"
+  },
+  "build": {
+    "appId": "com.piemailvalidator.app",
+    "productName": "Pie-Email-Validator",
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "path/to/icon.ico",
+      "publisherName": "Md Sazzad Hosen"
+    },
+    "directories": {
+      "output": "dist"
+    }
+  }
+}
